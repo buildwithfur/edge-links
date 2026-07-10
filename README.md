@@ -28,7 +28,7 @@ The public template is domain-neutral: its interface reads the deployed hostname
 
 ## Deploy without GitHub
 
-You only need a Cloudflare account. Download the [Edge Links source ZIP](https://github.com/buildwithfur/edge-links/archive/refs/heads/main.zip), extract it, then run the following from the extracted folder:
+You only need a Cloudflare account. Download the [latest Edge Links release ZIP](https://github.com/buildwithfur/edge-links/releases/latest/download/edge-links.zip), extract it, then run the following from the extracted folder:
 
 ```bash
 npm install

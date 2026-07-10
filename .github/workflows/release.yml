@@ -1,0 +1,23 @@
+name: Publish release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Package release source
+        shell: bash
+        run: git archive --format=zip --prefix="edge-links-${GITHUB_REF_NAME#v}/" --output=edge-links.zip HEAD
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" edge-links.zip --title "$GITHUB_REF_NAME" --generate-notes
