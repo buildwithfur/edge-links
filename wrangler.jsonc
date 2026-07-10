@@ -25,9 +25,11 @@
   ],
   "vars": {
     "SITE_NAME": "Edge Links",
-    "PUBLIC_ORIGIN": "",
-    "DASHBOARD_HOST": "",
-    "ROOT_REDIRECT_URL": "",
+    // Whitespace keeps these fields optional in Cloudflare's deploy form.
+    // The Worker trims whitespace, treating each value as unset.
+    "PUBLIC_ORIGIN": " ",
+    "DASHBOARD_HOST": " ",
+    "ROOT_REDIRECT_URL": " ",
     "LINK_LENGTH": "6"
   },
   "observability": {
