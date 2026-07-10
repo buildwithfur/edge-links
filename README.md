@@ -66,16 +66,16 @@ Attach both hostnames to the same Worker, then use these deployment values:
 | Setting | Value |
 | --- | --- |
 | `PUBLIC_ORIGIN` | `https://bwf.sh` |
-| `DASHBOARD_HOST` | `manage.bwf.sh` |
+| `DASHBOARD_HOST` | `edge-links.bwf.sh` |
 | `ROOT_REDIRECT_URL` | `https://furqaan.net` |
 
-With that setup, `manage.bwf.sh` serves the private dashboard, `bwf.sh` redirects to `furqaan.net`, and links such as `bwf.sh/furqaan` continue to be resolved by Edge Links. Do not attach `bwf.sh` to the `furqaan.net` deployment; both `bwf.sh` and `manage.bwf.sh` belong to the Edge Links Worker.
+With that setup, `edge-links.bwf.sh` serves the private dashboard, `bwf.sh` redirects to `furqaan.net`, and links such as `bwf.sh/furqaan` continue to be resolved by Edge Links. Do not attach `bwf.sh` to the `furqaan.net` deployment; both `bwf.sh` and `edge-links.bwf.sh` belong to the Edge Links Worker.
 
 To configure this exact setup:
 
 1. Deploy Edge Links, entering the values in the table above.
-2. In **Workers & Pages → Edge Links → Settings → Domains & Routes**, add both `bwf.sh` and `manage.bwf.sh` as Custom Domains.
-3. Visit `https://manage.bwf.sh` to create the sole admin account.
+2. In **Workers & Pages → Edge Links → Settings → Domains & Routes**, add both `bwf.sh` and `edge-links.bwf.sh` as Custom Domains.
+3. Visit `https://edge-links.bwf.sh` to create the sole admin account.
 4. Create the custom alias `furqaan` with destination `https://furqaan.net`.
 
 The result is:
@@ -83,7 +83,7 @@ The result is:
 ```text
 bwf.sh                 → https://furqaan.net
 bwf.sh/furqaan         → https://furqaan.net
-manage.bwf.sh          → private Edge Links dashboard
+edge-links.bwf.sh      → private Edge Links dashboard
 ```
 
 ## Local development
@@ -114,7 +114,7 @@ Non-secret settings live in `wrangler.jsonc`:
 | --- | --- | --- |
 | `SITE_NAME` | `Edge Links` | Name used by generated status and error pages |
 | `PUBLIC_ORIGIN` | empty | Optional canonical origin; otherwise the request origin is used |
-| `DASHBOARD_HOST` | empty | Optional hostname that exclusively serves the dashboard and API |
+| `DASHBOARD_HOST` | empty | Optional dashboard hostname, for example `edge-links.bwf.sh` |
 | `ROOT_REDIRECT_URL` | empty | Optional destination for the public domain's `/` path when `DASHBOARD_HOST` is set |
 | `LINK_LENGTH` | `6` | Length of generated slugs, clamped to 4–16 |
 
