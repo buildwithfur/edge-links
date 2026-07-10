@@ -49,15 +49,25 @@ Wrangler opens a Cloudflare sign-in page, then deploys directly from your comput
 
 ## Configuration
 
-These values appear in the Cloudflare deployment form. You can change them later in the Worker's settings.
+### Start with zero configuration
 
-| Variable | Required | Format | Behavior |
+You can deploy Edge Links without changing any configuration. Cloudflare gives the Worker an address like `https://<project-name>.<account-subdomain>.workers.dev`. That address is both the dashboard and the short-link domain:
+
+- `/` opens the dashboard.
+- `/<slug>` redirects through a short link.
+- Newly created links use that same `workers.dev` address.
+
+You do not need a custom domain, database, storage bucket, or external service to start.
+
+The values below appear in the Cloudflare deployment form. Every one is optional and can be changed later in the Worker's settings.
+
+| Variable | Default when left alone | Set it when | Format and behavior |
 | --- | --- | --- | --- |
-| `SITE_NAME` | No | Text | Name shown on status and error pages. Defaults to `Edge Links`. |
-| `PUBLIC_ORIGIN` | No | URL origin including `https://` | Base URL shown and returned for short links. When blank, Edge Links uses the origin of the current request. Set this when the dashboard and short links use different hosts. |
-| `DASHBOARD_HOST` | No | Hostname without `https://` or a path | Restricts the dashboard and API to this host. When blank, the dashboard, API, and short links share the same host. |
-| `ROOT_REDIRECT_URL` | No | Full `http://` or `https://` URL | Redirects the public short-link host's home page when `DASHBOARD_HOST` is set. When blank, that home page returns `404`. It has no effect when `DASHBOARD_HOST` is blank because the home page serves the dashboard. |
-| `LINK_LENGTH` | No | Integer from `4` to `16` | Length of randomly generated slugs. Defaults to `6` and does not affect custom slugs. |
+| `SITE_NAME` | `Edge Links` | You want a different name on status and error pages. | Text. |
+| `PUBLIC_ORIGIN` | The address currently being used | You want every generated link to use one specific domain. | URL origin including `https://`. When blank, Edge Links uses the origin of the current request. |
+| `DASHBOARD_HOST` | Dashboard and short links share one host | You want the dashboard and API on their own host. | Hostname without `https://` or a path. When set, generated links should also have `PUBLIC_ORIGIN` set. |
+| `ROOT_REDIRECT_URL` | The home page opens the dashboard | You want the public short-link host's `/` page to redirect elsewhere. | Full `http://` or `https://` URL. Only applies when `DASHBOARD_HOST` is set; otherwise `/` remains the dashboard. |
+| `LINK_LENGTH` | `6` | You want longer or shorter random slugs. | Integer from `4` to `16`. Does not affect custom slugs. |
 
 ### Domain behavior
 
@@ -68,6 +78,12 @@ These values appear in the Cloudflare deployment form. You can change them later
 - Changing these variables or adding domains does not move or erase accounts, links, or analytics stored by the Worker.
 
 Cloudflare's deployment form may display a blank-looking value for an optional variable. Edge Links trims whitespace and treats it as unset.
+
+## Recover access
+
+Edge Links does not currently include a password-reset mechanism. If you lose the dashboard password, it cannot be retrieved because passwords are stored only as hashes.
+
+A future optional recovery-token feature will let an owner set a `RECOVERY_TOKEN` as a Cloudflare Worker secret, then use it to choose a new password. It will not require email or any external service. Until that feature is available, keep your admin password in a password manager.
 
 ## For developers
 

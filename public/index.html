@@ -16,7 +16,7 @@
       <header class="site-header">
         <a class="brand" href="/" aria-label="Edge Links home">
           <span class="brand-mark">↗/</span>
-          <span data-public-host>your.link</span>
+          <span>Edge Links</span>
         </a>
         <div class="header-actions">
           <span class="system-status"><span></span> Cloudflare native</span>
@@ -30,7 +30,7 @@
           <div class="hero-copy">
             <p class="eyebrow">Your link infrastructure</p>
             <h1>Short links.<br><em>Long memory.</em></h1>
-            <p class="hero-description">Create clean <strong data-public-host>your.link</strong> links, keep them editable, and understand where every click comes from.</p>
+            <p class="hero-description">Create clean short links, keep them editable, and understand where every click comes from.</p>
           </div>
 
           <form class="shortener-card authenticated-only" id="create-link-form">
@@ -81,12 +81,12 @@
         </section>
       </main>
 
-      <footer><span>Open source by <a href="https://github.com/buildwithfur" target="_blank" rel="noreferrer">Buildwithfur</a> · Powered by Cloudflare Workers</span><span>No servers. No external database. No drama.</span></footer>
+      <footer><span>Open-source software · Powered by Cloudflare Workers</span><span>No servers. No external database. No drama.</span></footer>
     </div>
 
     <div class="auth-gate" id="auth-gate" hidden>
       <section class="auth-panel">
-        <a class="brand" href="/"><span class="brand-mark">↗/</span><span data-public-host>your.link</span></a>
+        <a class="brand" href="/"><span class="brand-mark">↗/</span><span>Edge Links</span></a>
         <div id="setup-copy" hidden><p class="eyebrow">First run</p><h2>Claim your shortener.</h2><p>Create the single admin account. It lives inside this Worker’s durable storage.</p></div>
         <div id="login-copy" hidden><p class="eyebrow">Private dashboard</p><h2>Welcome back.</h2><p>Sign in to manage your links.</p></div>
         <form id="auth-form">
@@ -95,9 +95,10 @@
           <button class="button primary" id="auth-submit" type="submit">Continue</button>
           <p class="form-error" id="auth-error" role="alert"></p>
         </form>
+        <p class="auth-recovery"><a href="https://github.com/buildwithfur/edge-links#recover-access" target="_blank" rel="noreferrer">Forgot your password?</a></p>
         <p class="auth-footnote">Protected by rate limits, PBKDF2-SHA256, HttpOnly sessions, and Cloudflare’s edge.</p>
       </section>
-      <aside class="auth-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><strong id="auth-domain">your<span>.link</span></strong><p>One tiny domain.<br>Every big idea.</p></aside>
+      <aside class="auth-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><strong>Edge<span> Links</span></strong><p>Short links.<br>Long memory.</p></aside>
     </div>
 
     <dialog id="edit-dialog">

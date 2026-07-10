@@ -16,17 +16,7 @@ const $$ = (selector) => [...document.querySelectorAll(selector)];
 function initializeSiteCopy() {
   const host = window.location.host;
   document.title = `${host} · Edge Links`;
-  $$('[data-public-host]').forEach((element) => { element.textContent = host; });
   $$('[data-public-prefix]').forEach((element) => { element.textContent = `${host}/`; });
-
-  const authDomain = $('#auth-domain');
-  const dot = host.indexOf('.');
-  authDomain.replaceChildren(document.createTextNode(dot > 0 ? host.slice(0, dot) : host));
-  if (dot > 0) {
-    const suffix = document.createElement('span');
-    suffix.textContent = host.slice(dot);
-    authDomain.append(suffix);
-  }
 
   $('#api-example').textContent = `curl -X POST ${window.location.origin}/api/v2/links \\
   -H "Authorization: Bearer lnk_YOUR_TOKEN" \\

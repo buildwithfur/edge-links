@@ -12,16 +12,16 @@
   "cloudflare": {
     "bindings": {
       "SITE_NAME": {
-        "description": "A friendly name for this shortener. Example: `BWF URL Shortener`."
+        "description": "A friendly name shown on status and error pages. Default: `Edge Links`."
       },
       "PUBLIC_ORIGIN": {
-        "description": "The public short-link domain, including `https://`. Example: `https://bwf.sh`. Leave blank when you only use the assigned workers.dev address."
+        "description": "The canonical short-link domain, including `https://`. Leave blank to use the assigned workers.dev address or current host."
       },
       "DASHBOARD_HOST": {
-        "description": "Optional private dashboard domain, without `https://`. Example: `edge-links.bwf.sh`. Leave blank when the dashboard and links share one domain."
+        "description": "Optional separate dashboard host, without `https://` or a path. Leave blank when the dashboard and links share one domain."
       },
       "ROOT_REDIRECT_URL": {
-        "description": "Optional destination for the public domain's home page. Example: `https://furqaan.net`. Leave blank unless you use a separate dashboard domain."
+        "description": "Optional destination for the public short-link domain's home page. Leave blank unless you use a separate dashboard host."
       },
       "LINK_LENGTH": {
         "description": "Number of characters in random short links. Keep the default of `6` unless you have a reason to change it."
