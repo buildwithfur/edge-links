@@ -38,37 +38,6 @@ npm run deploy
 
 Wrangler opens a Cloudflare sign-in page, then deploys directly from your computer. No GitHub account or repository is created.
 
-## Buildwithfur setup
-
-Use these exact values when deploying Edge Links for Buildwithfur:
-
-| Field in the deploy form | Value |
-| --- | --- |
-| `SITE_NAME` | `Buildwithfur Links` |
-| `PUBLIC_ORIGIN` | `https://bwf.sh` |
-| `DASHBOARD_HOST` | `edge-links.bwf.sh` |
-| `ROOT_REDIRECT_URL` | `https://furqaan.net` |
-| `LINK_LENGTH` | `6` |
-
-After deployment:
-
-1. Open **Workers & Pages** in Cloudflare and select the Edge Links Worker.
-2. Select **Settings → Domains & Routes → Add Custom Domain**.
-3. Add `bwf.sh`.
-4. Add `edge-links.bwf.sh`.
-5. Open `https://edge-links.bwf.sh` and create the admin account.
-6. Create the custom link `furqaan` with destination `https://furqaan.net`.
-
-You will then have:
-
-```text
-bwf.sh                 → https://furqaan.net
-bwf.sh/furqaan         → https://furqaan.net
-edge-links.bwf.sh      → private Edge Links dashboard
-```
-
-Do not add `bwf.sh` to the `furqaan.net` deployment. Both `bwf.sh` and `edge-links.bwf.sh` belong to Edge Links.
-
 ## What it includes
 
 - One private admin account
@@ -78,17 +47,27 @@ Do not add `bwf.sh` to the `furqaan.net` deployment. Both `bwf.sh` and `edge-lin
 - A bearer-token API for automations
 - Cloudflare Durable Object storage built into the same Worker
 
-## Advanced configuration
+## Configuration
 
-Most people do not need to edit configuration files. These settings are available if you do:
+These values appear in the Cloudflare deployment form. You can change them later in the Worker's settings.
 
-| Setting | What it does |
-| --- | --- |
-| `SITE_NAME` | Name shown on error pages |
-| `PUBLIC_ORIGIN` | The domain used when new short links are created |
-| `DASHBOARD_HOST` | A separate hostname for the private dashboard |
-| `ROOT_REDIRECT_URL` | Where the public domain's home page redirects |
-| `LINK_LENGTH` | Characters in randomly generated links; 4–16, default 6 |
+| Variable | Required | Format | Behavior |
+| --- | --- | --- | --- |
+| `SITE_NAME` | No | Text | Name shown on status and error pages. Defaults to `Edge Links`. |
+| `PUBLIC_ORIGIN` | No | URL origin including `https://` | Base URL shown and returned for short links. When blank, Edge Links uses the origin of the current request. Set this when the dashboard and short links use different hosts. |
+| `DASHBOARD_HOST` | No | Hostname without `https://` or a path | Restricts the dashboard and API to this host. When blank, the dashboard, API, and short links share the same host. |
+| `ROOT_REDIRECT_URL` | No | Full `http://` or `https://` URL | Redirects the public short-link host's home page when `DASHBOARD_HOST` is set. When blank, that home page returns `404`. It has no effect when `DASHBOARD_HOST` is blank because the home page serves the dashboard. |
+| `LINK_LENGTH` | No | Integer from `4` to `16` | Length of randomly generated slugs. Defaults to `6` and does not affect custom slugs. |
+
+### Domain behavior
+
+- Leave `DASHBOARD_HOST` blank to run the dashboard and short links on one host.
+- Set `DASHBOARD_HOST` to keep the dashboard and API on a separate host. Set `PUBLIC_ORIGIN` at the same time so generated links use the public short-link host.
+- `ROOT_REDIRECT_URL` is optional and only controls the public host's `/` page. It never changes where short links redirect.
+- Add every hostname used by Edge Links to the same Worker under **Settings → Domains & Routes**. A hostname cannot remain attached to another Worker or Pages project.
+- Changing these variables or adding domains does not move or erase accounts, links, or analytics stored by the Worker.
+
+Cloudflare's deployment form may display a blank-looking value for an optional variable. Edge Links trims whitespace and treats it as unset.
 
 ## For developers
 
