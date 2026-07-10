@@ -9,6 +9,25 @@
     "type": "git",
     "url": "https://github.com/buildwithfur/edge-links"
   },
+  "cloudflare": {
+    "bindings": {
+      "SITE_NAME": {
+        "description": "A friendly name for this shortener. Example: `BWF URL Shortener`."
+      },
+      "PUBLIC_ORIGIN": {
+        "description": "The public short-link domain, including `https://`. Example: `https://bwf.sh`. Leave blank when you only use the assigned workers.dev address."
+      },
+      "DASHBOARD_HOST": {
+        "description": "Optional private dashboard domain, without `https://`. Example: `edge-links.bwf.sh`. Leave blank when the dashboard and links share one domain."
+      },
+      "ROOT_REDIRECT_URL": {
+        "description": "Optional destination for the public domain's home page. Example: `https://furqaan.net`. Leave blank unless you use a separate dashboard domain."
+      },
+      "LINK_LENGTH": {
+        "description": "Number of characters in random short links. Keep the default of `6` unless you have a reason to change it."
+      }
+    }
+  },
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
