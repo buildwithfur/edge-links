@@ -186,6 +186,30 @@ function publicOrigin(request: Request, env: Env): string {
   }
 }
 
+function configuredHostname(value: string): string | null {
+  const candidate = value.trim();
+  if (!candidate) return null;
+  try {
+    const url = new URL(candidate.includes("://") ? candidate : `https://${candidate}`);
+    return url.hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+function configuredRootRedirect(value: string): string | null {
+  const candidate = value.trim();
+  if (!candidate) return null;
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    if (url.username || url.password) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 function toIndexRecord(link: LinkRecord): LinkIndexRecord {
   return {
     slug: link.slug,
@@ -523,13 +547,29 @@ async function handleApi(request: Request, env: Env, path: string): Promise<Resp
 async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const path = url.pathname.startsWith("/api/v2/") ? `/api/${url.pathname.slice("/api/v2/".length)}` : url.pathname;
+  const dashboardHost = configuredHostname(env.DASHBOARD_HOST);
+  const isDashboardHost = dashboardHost !== null && url.hostname.toLowerCase() === dashboardHost;
 
-  if (path.startsWith("/api/")) return withCors(await handleApi(request, env, path));
+  if (path.startsWith("/api/")) {
+    if (dashboardHost !== null && !isDashboardHost) {
+      return withCors(json({ error: "API is available on the dashboard host only." }, { status: 404 }));
+    }
+    return withCors(await handleApi(request, env, path));
+  }
   if (request.method === "GET" && (path === "/" || path === "/index.html")) {
-    return secureResponse(await env.ASSETS.fetch(request));
+    if (dashboardHost === null || isDashboardHost) return secureResponse(await env.ASSETS.fetch(request));
+    const target = configuredRootRedirect(env.ROOT_REDIRECT_URL);
+    if (target) {
+      return new Response(null, {
+        status: 302,
+        headers: securityHeaders(new Headers({ Location: target, "Cache-Control": "no-store" })),
+      });
+    }
+    return statusPage(404, "Not found", "This short domain does not serve a homepage.", env.SITE_NAME);
   }
 
   if (request.method === "GET" && /^\/[^/]+\/?$/u.test(path)) {
+    if (isDashboardHost) return statusPage(404, "Not found", "Short links are served from the public domain.", env.SITE_NAME);
     let slug: string;
     try {
       slug = normalizeSlug(decodeURIComponent(path.replace(/^\//u, "").replace(/\/$/u, "")));

@@ -26,6 +26,8 @@
   "vars": {
     "SITE_NAME": "Edge Links",
     "PUBLIC_ORIGIN": "",
+    "DASHBOARD_HOST": "",
+    "ROOT_REDIRECT_URL": "",
     "LINK_LENGTH": "6"
   },
   "observability": {
