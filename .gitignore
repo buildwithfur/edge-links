@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+node_modules/
+.wrangler/
+coverage/
+dist/
+worker-startup.cpuprofile
+**/.DS_Store
+wrangler.local.jsonc

@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "edge-links",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-07-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/*", "!/assets/*", "!/favicon.svg", "!/manifest.webmanifest", "!/robots.txt"]
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "ACCOUNT", "class_name": "AccountStore" },
+      { "name": "LINKS", "class_name": "LinkStore" },
+      { "name": "RATE_LIMITS", "class_name": "RateLimiter" }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["AccountStore", "LinkStore", "RateLimiter"]
+    }
+  ],
+  "vars": {
+    "SITE_NAME": "Edge Links",
+    "PUBLIC_ORIGIN": "",
+    "LINK_LENGTH": "6"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 }
+  }
+}

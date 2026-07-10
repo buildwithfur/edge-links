@@ -1,0 +1,28 @@
+{
+  "name": "edge-links",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A Cloudflare-native, single-owner URL shortener using Workers and Durable Objects.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buildwithfur/edge-links"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run types && npm run typecheck && npm test",
+    "deploy:dry-run": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.18.4",
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10",
+    "wrangler": "4.110.0"
+  }
+}

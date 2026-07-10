@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff5a36">
+    <meta name="description" content="A private, Cloudflare-native short link dashboard.">
+    <title>Edge Links</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <script src="/assets/app.js" type="module"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="Edge Links home">
+          <span class="brand-mark">↗/</span>
+          <span data-public-host>your.link</span>
+        </a>
+        <div class="header-actions">
+          <span class="system-status"><span></span> Cloudflare native</span>
+          <button class="button quiet authenticated-only" id="api-key-button" type="button">API key</button>
+          <button class="avatar authenticated-only" id="logout-button" type="button" title="Log out">A</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Your link infrastructure</p>
+            <h1>Short links.<br><em>Long memory.</em></h1>
+            <p class="hero-description">Create clean <strong data-public-host>your.link</strong> links, keep them editable, and understand where every click comes from.</p>
+          </div>
+
+          <form class="shortener-card authenticated-only" id="create-link-form">
+            <div class="card-heading">
+              <span>New short link</span>
+              <span class="worker-pill">DO · SQLite</span>
+            </div>
+            <label class="field target-field">
+              <span>Destination</span>
+              <input id="target" name="target" type="url" inputmode="url" placeholder="https://example.com/launch" required autocomplete="off">
+            </label>
+            <div class="field-row">
+              <label class="field slug-field">
+                <span>Custom back-half <small>optional</small></span>
+                <div class="input-prefix"><b data-public-prefix>your.link/</b><input id="slug" name="slug" type="text" placeholder="launch" maxlength="48" pattern="[a-z0-9][a-z0-9_-]*" autocomplete="off"></div>
+              </label>
+              <label class="field">
+                <span>Expires <small>optional</small></span>
+                <input id="expires-at" name="expiresAt" type="datetime-local">
+              </label>
+            </div>
+            <label class="field">
+              <span>Internal note <small>optional</small></span>
+              <input id="description" name="description" type="text" placeholder="Product Hunt launch campaign" maxlength="280">
+            </label>
+            <button class="button primary create-button" type="submit"><span>Create link</span><span aria-hidden="true">↗</span></button>
+            <div class="created-link" id="created-link" hidden>
+              <div><small>Ready to share</small><a id="created-link-anchor" target="_blank" rel="noreferrer"></a></div>
+              <button class="button compact" id="copy-created-link" type="button">Copy</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="dashboard authenticated-only">
+          <div class="section-heading">
+            <div><p class="eyebrow">Library</p><h2>Your links</h2></div>
+            <label class="search-field"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search links"></label>
+          </div>
+          <div class="link-list" id="link-list" aria-live="polite"></div>
+          <div class="empty-state" id="empty-state" hidden>
+            <span>↗</span><h3>No links yet</h3><p>Your first short link will appear here.</p>
+          </div>
+          <div class="pagination" id="pagination" hidden>
+            <button class="button quiet" id="previous-page" type="button">← Previous</button>
+            <span id="page-summary"></span>
+            <button class="button quiet" id="next-page" type="button">Next →</button>
+          </div>
+        </section>
+      </main>
+
+      <footer><span>Open source by <a href="https://github.com/buildwithfur" target="_blank" rel="noreferrer">Buildwithfur</a> · Powered by Cloudflare Workers</span><span>No servers. No external database. No drama.</span></footer>
+    </div>
+
+    <div class="auth-gate" id="auth-gate" hidden>
+      <section class="auth-panel">
+        <a class="brand" href="/"><span class="brand-mark">↗/</span><span data-public-host>your.link</span></a>
+        <div id="setup-copy" hidden><p class="eyebrow">First run</p><h2>Claim your shortener.</h2><p>Create the single admin account. It lives inside this Worker’s durable storage.</p></div>
+        <div id="login-copy" hidden><p class="eyebrow">Private dashboard</p><h2>Welcome back.</h2><p>Sign in to manage your links.</p></div>
+        <form id="auth-form">
+          <label class="field"><span>Email</span><input id="auth-email" name="email" type="email" autocomplete="email" required></label>
+          <label class="field"><span>Password</span><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" required></label>
+          <button class="button primary" id="auth-submit" type="submit">Continue</button>
+          <p class="form-error" id="auth-error" role="alert"></p>
+        </form>
+        <p class="auth-footnote">Protected by rate limits, PBKDF2-SHA256, HttpOnly sessions, and Cloudflare’s edge.</p>
+      </section>
+      <aside class="auth-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><strong id="auth-domain">your<span>.link</span></strong><p>One tiny domain.<br>Every big idea.</p></aside>
+    </div>
+
+    <dialog id="edit-dialog">
+      <form method="dialog" class="dialog-card" id="edit-form">
+        <div class="dialog-heading"><div><p class="eyebrow">Edit link</p><h2 id="edit-title"></h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+        <label class="field"><span>Destination</span><input id="edit-target" type="url" required></label>
+        <label class="field"><span>Internal note</span><input id="edit-description" type="text" maxlength="280"></label>
+        <label class="field"><span>Expires</span><input id="edit-expiry" type="datetime-local"></label>
+        <div class="dialog-actions"><button class="button quiet" value="cancel">Cancel</button><button class="button primary" id="save-edit" value="default">Save changes</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="stats-dialog">
+      <section class="dialog-card stats-card">
+        <div class="dialog-heading"><div><p class="eyebrow">Link intelligence</p><h2 id="stats-title"></h2></div><button class="icon-button close-dialog" aria-label="Close">×</button></div>
+        <div class="big-stat"><strong id="stats-total">0</strong><span>total clicks</span></div>
+        <div class="chart" id="daily-chart"></div>
+        <div class="stat-grids"><section><h3>Top countries</h3><div id="country-stats"></div></section><section><h3>Top referrers</h3><div id="referrer-stats"></div></section><section><h3>Browsers</h3><div id="browser-stats"></div></section></div>
+      </section>
+    </dialog>
+
+    <dialog id="api-dialog">
+      <section class="dialog-card api-card">
+        <div class="dialog-heading"><div><p class="eyebrow">Automation</p><h2>API access</h2></div><button class="icon-button close-dialog" aria-label="Close">×</button></div>
+        <p>Use a bearer token with the <code>POST /api/v2/links</code> endpoint.</p>
+        <pre><code id="api-example"></code></pre>
+        <div class="api-token" id="api-token" hidden><code id="api-token-value"></code><button class="button compact" id="copy-api-key" type="button">Copy</button></div>
+        <p class="muted" id="api-key-status"></p>
+        <div class="dialog-actions"><button class="button danger" id="revoke-api-key" type="button">Revoke token</button><button class="button primary" id="generate-api-key" type="button">Generate new token</button></div>
+      </section>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
