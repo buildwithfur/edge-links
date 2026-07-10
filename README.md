@@ -26,14 +26,26 @@ The public template is domain-neutral: its interface reads the deployed hostname
 - SQLite-backed Durable Objects provisioned automatically by Wrangler
 - No runtime npm dependencies
 
-## One-click deploy
+## Deploy without GitHub
+
+You only need a Cloudflare account. Download the [Edge Links source ZIP](https://github.com/buildwithfur/edge-links/archive/refs/heads/main.zip), extract it, then run the following from the extracted folder:
+
+```bash
+npm install
+npx wrangler login
+npm run deploy
+```
+
+Wrangler opens a Cloudflare sign-in page, then deploys directly from your computer. No GitHub account, Git repository, or Git integration is created.
+
+## Deploy with GitHub or GitLab
 
 1. Select **Deploy to Cloudflare** above.
 2. Choose a Cloudflare account and accept the detected Worker settings.
 3. Open the assigned `workers.dev` URL and create the single admin account.
 4. Optionally attach your short domain in **Workers & Pages → your Worker → Settings → Domains & Routes → Add → Custom Domain**.
 
-The default configuration does not claim a domain, which lets anyone deploy the repository. To manage a custom domain as code, add a route to `wrangler.jsonc`:
+This Git-based option creates a copy of the repository in your GitHub or GitLab account and enables automatic deployments for future pushes. The default configuration does not claim a domain, which lets anyone deploy the repository. To manage a custom domain as code, add a route to `wrangler.jsonc`:
 
 ```jsonc
 "routes": [
