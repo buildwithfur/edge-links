@@ -71,20 +71,20 @@ Attach both hostnames to the same Worker, then use these deployment values:
 
 With that setup, `manage.bwf.sh` serves the private dashboard, `bwf.sh` redirects to `furqaan.net`, and links such as `bwf.sh/furqaan` continue to be resolved by Edge Links. Do not attach `bwf.sh` to the `furqaan.net` deployment; both `bwf.sh` and `manage.bwf.sh` belong to the Edge Links Worker.
 
-## Architecture
+To configure this exact setup:
 
-```mermaid
-flowchart LR
-  Browser["Browser / API client"] --> Worker["Worker"]
-  Worker --> Assets["Bundled static assets"]
-  Worker --> Account["AccountStore DO\nadmin · sessions · link index"]
-  Worker --> Rate["RateLimiter DO\nper IP + action"]
-  Worker --> LinkA["LinkStore DO\n/launch + analytics"]
-  Worker --> LinkB["LinkStore DO\n/docs + analytics"]
-  Worker --> LinkN["LinkStore DO\none per slug"]
+1. Deploy Edge Links, entering the values in the table above.
+2. In **Workers & Pages → Edge Links → Settings → Domains & Routes**, add both `bwf.sh` and `manage.bwf.sh` as Custom Domains.
+3. Visit `https://manage.bwf.sh` to create the sole admin account.
+4. Create the custom alias `furqaan` with destination `https://furqaan.net`.
+
+The result is:
+
+```text
+bwf.sh                 → https://furqaan.net
+bwf.sh/furqaan         → https://furqaan.net
+manage.bwf.sh          → private Edge Links dashboard
 ```
-
-Each slug maps deterministically to its own `LinkStore` Durable Object. Redirect traffic spreads across link objects instead of bottlenecking on one global database object. The low-volume dashboard index and admin session state live in one `AccountStore`. All three Durable Object classes are exported by the same Worker and created by the same deploy command.
 
 ## Local development
 
